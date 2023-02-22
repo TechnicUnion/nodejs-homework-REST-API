@@ -10,9 +10,9 @@ async function listContacts() {
 }
 
 async function getContactById(contactId) {
-    const list = await fs.readFile(contactsPath, "utf-8");
-    const filter = list.find(item => item.id === contactId);
-    return filter || null;
+  const list = await listContacts();
+  const result = list.find(item => item.id === contactId);
+    return result || null;
 }
 
 async function removeContact(contactId) {
