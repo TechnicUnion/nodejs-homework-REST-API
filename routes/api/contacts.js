@@ -40,7 +40,7 @@ router.post('/', async (req, res, next) => {
   try {
     const { error } = addSchema.validate(req.body);
     if (error) {
-      throw HttpError(400, error.message);
+      throw HttpError(400, 'missing required name field');
     }
     const result = await contacts.addContact(req.body);
     res.status(201).json(result);
@@ -50,15 +50,26 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await contacts.removeContact(id);
+    if (!result) {
+      throw HttpError(404, 'Not found');
+    }
+    res.json({ message: 'contact deleted' })
+  }
+  catch(error) {
+    next(error)
+  }
+  
 })
 
 router.put('/:id', async (req, res, next) => {
   try {
     const { error } = addSchema.validate(req.body);
     if (error) {
-      throw HttpError(400, error.message);
+      throw HttpError(400, 'missing fields');
     }
     const { id } = req.params;
     const result = await contacts.updateContact(id, req.body);
