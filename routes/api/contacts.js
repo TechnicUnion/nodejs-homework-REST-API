@@ -8,7 +8,7 @@ const router = express.Router()
 
 const addSchema = Joi.object({
   name: Joi.string().required(),
-  email: Joi.string().required(),
+  email: Joi.string().email({ minDomainSegments: 2}).required(),
   phone: Joi.string().required(),
 })
 
@@ -40,7 +40,7 @@ router.post('/', async (req, res, next) => {
   try {
     const { error } = addSchema.validate(req.body);
     if (error) {
-      throw HttpError(400, 'missing required name field');
+      throw HttpError(400, error.message);
     }
     const result = await contacts.addContact(req.body);
     res.status(201).json(result);
